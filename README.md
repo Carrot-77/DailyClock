@@ -6,8 +6,8 @@
 2. chromedriver
 3. python3.6及以上
 
-## 文件目录data
-
+## 创建一个文件目录data
+里面包含两个json文件
 `data.json` 打卡账号和密码邮箱
 `mail.json` 发邮件的邮箱账号和授权码
 

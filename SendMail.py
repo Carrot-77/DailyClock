@@ -27,9 +27,11 @@ class SendMail:
         send_user = get_user("/home/carrot/DailyClock/data/mail.json")
         self.from_addr = send_user[0]['user']  #输入发件人Email地址
         password = send_user[0]['passwd']  #密码
-        smtp_server = 'smtp.qq.com'  #输入SMTP服务器地址:
         
-        email_info = '今日平安行动打卡成功'
+        # SMTP邮箱服务器
+        smtp_server = 'smtp.qq.com'
+        
+        email_info = '平安行动打卡脚本崩了，可能是服务器的问题，也可能是学校的问题，今天记得手动打卡:('
         self.msg = MIMEText(email_info, 'plain', 'utf-8')
         
         self.msg['From'] = _format_addr('DailyClock <%s>' % self.from_addr) 

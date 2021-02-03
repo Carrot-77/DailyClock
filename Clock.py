@@ -10,8 +10,6 @@ def get_user(filename):
     with open(filename, "r") as f:
         data = json.load(f)
 
-    # name = data[0]['user']
-    # passwd = data[0]['passwd']
     return data
 
 class Login:
@@ -25,7 +23,8 @@ class Login:
         self.driver.set_page_load_timeout(120)
 
         self.today = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
-
+        
+        # 日志部分
         self.log_name = "./clock.log"
         self.logger = logging.getLogger(self.log_name)
         self.logger.setLevel(logging.DEBUG)
@@ -39,42 +38,51 @@ class Login:
                                       datefmt='%a, %d %b %Y %H:%M:%S')
         fh.setFormatter(formatter)
         self.logger.addHandler(fh)
-
+        
+        # 邮箱初始化
         self.mail_server = SendMail.SendMail()
 
     def info_log(self, msg):
         self.logger.info(msg)
 
+    def info_err(self, msg):
+        self.logger.error(msg)
+
     def run(self, name, passwd, email):
-        self.driver.get('http://one.hrbeu.edu.cn/taskcenter/workflow/index')
-        time.sleep(2)
+        try:
+            self.driver.get('http://one.hrbeu.edu.cn/taskcenter/workflow/index')
+            time.sleep(2)
 
-        # 输入账号密码
-        self.driver.find_element_by_xpath('//*[@id="username"]').send_keys(name)
-        self.driver.find_element_by_xpath('//*[@id="password"]').send_keys(passwd)
-        # 登录
-        self.driver.find_element_by_xpath('//*[@id="fm1"]/li[4]/input[4]').click()
-        time.sleep(2)
+            # 输入账号密码
+            self.driver.find_element_by_xpath('//*[@id="username"]').send_keys(name)
+            self.driver.find_element_by_xpath('//*[@id="password"]').send_keys(passwd)
+            # 登录
+            self.driver.find_element_by_xpath('//*[@id="fm1"]/li[4]/input[4]').click()
+            time.sleep(2)
 
-        # 进入打卡界面
-        self.driver.get('http://one.hrbeu.edu.cn/infoplus/form/JKXXSB/start')
-        time.sleep(10)
+            # 进入打卡界面
+            self.driver.get('http://one.hrbeu.edu.cn/infoplus/form/JKXXSB/start')
+            time.sleep(10)
 
-        # 确认打卡
-        self.driver.find_element_by_xpath('//*[@id="V1_CTRL82"]').click()
-        self.driver.find_element_by_class_name('command_button_content').click()
-        time.sleep(1)
+            # 确认打卡
+            self.driver.find_element_by_xpath('//*[@id="V1_CTRL82"]').click()
+            self.driver.find_element_by_class_name('command_button_content').click()
+            time.sleep(1)
 
-        # 两次弹窗确认
-        self.driver.find_element_by_xpath('//*[@class="dialog_button default fr"]').click()
-        time.sleep(1)
-        self.driver.find_element_by_xpath('//*[@class="dialog_button default fr"]').click()
-        time.sleep(2)
+            # 两次弹窗确认
+            self.driver.find_element_by_xpath('//*[@class="dialog_button default fr"]').click()
+            time.sleep(1)
+            self.driver.find_element_by_xpath('//*[@class="dialog_button default fr"]').click()
+            time.sleep(2)
 
-        # 写入日志
-        self.info_log('{}已打卡'.format(name))
+            # 写入日志
+            self.info_log('{}已打卡'.format(name))
+        except:
+            # 写入错误日志
+            self.info_err('{}打开失败'.format(name))
 
-        self.mail_server.sendmail(email)
+            # 失败则发送邮箱
+            self.mail_server.sendmail(email)
 
     def destroy(self):
         self.driver.close()

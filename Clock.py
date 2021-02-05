@@ -5,6 +5,10 @@ import json, time
 import logging
 import os
 import SendMail
+import Log
+
+
+mylog = Log.Log()
 
 def get_user(filename):
     with open(filename, "r") as f:
@@ -22,31 +26,9 @@ class Login:
         self.driver = webdriver.Chrome(chrome_options=chrome_options)
         self.driver.set_page_load_timeout(120)
 
-        self.today = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
-        
-        # 日志部分
-        self.log_name = "./clock.log"
-        self.logger = logging.getLogger(self.log_name)
-        self.logger.setLevel(logging.DEBUG)
-
-        log_path = os.path.dirname(os.path.abspath(__file__))
-        logname = log_path + '/' + 'clock.log'  # 指定输出的日志文件名
-
-        fh = logging.FileHandler(logname, mode='a', encoding='utf-8')  # 不拆分日志文件，a指追加模式,w为覆盖模式
-        fh.setLevel(logging.DEBUG)
-        formatter = logging.Formatter('%(asctime)s-%(levelname)s-[日志信息]: %(message)s',
-                                      datefmt='%a, %d %b %Y %H:%M:%S')
-        fh.setFormatter(formatter)
-        self.logger.addHandler(fh)
-        
         # 邮箱初始化
         self.mail_server = SendMail.SendMail()
 
-    def info_log(self, msg):
-        self.logger.info(msg)
-
-    def info_err(self, msg):
-        self.logger.error(msg)
 
     def run(self, name, passwd, email):
         try:
@@ -62,7 +44,7 @@ class Login:
 
             # 进入打卡界面
             self.driver.get('http://one.hrbeu.edu.cn/infoplus/form/JKXXSB/start')
-            time.sleep(10)
+            time.sleep(5)
 
             # 确认打卡
             self.driver.find_element_by_xpath('//*[@id="V1_CTRL82"]').click()
@@ -76,10 +58,10 @@ class Login:
             time.sleep(2)
 
             # 写入日志
-            self.info_log('{}已打卡'.format(name))
+            mylog.info_log('{}已打卡'.format(name))
         except:
             # 写入错误日志
-            self.info_err('{}打开失败'.format(name))
+            mylog.info_err('{}打开失败'.format(name))
 
             # 失败则发送邮箱
             self.mail_server.sendmail(email)

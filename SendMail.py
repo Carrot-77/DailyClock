@@ -31,7 +31,7 @@ class SendMail:
         # SMTP邮箱服务器
         smtp_server = 'smtp.qq.com'
         
-        email_info = '平安行动打卡脚本崩了，可能是服务器的问题，也可能是学校的问题，今天记得手动打卡:('
+        email_info = '平安行动打卡脚本崩了，绝对是学校的问题，今天记得手动打卡QAQ'
         self.msg = MIMEText(email_info, 'plain', 'utf-8')
         
         self.msg['From'] = _format_addr('DailyClock <%s>' % self.from_addr) 

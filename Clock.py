@@ -39,7 +39,7 @@ class Login:
             self.driver.find_element_by_xpath('//*[@id="username"]').send_keys(name)
             self.driver.find_element_by_xpath('//*[@id="password"]').send_keys(passwd)
             # 登录
-            self.driver.find_element_by_xpath('//*[@id="fm1"]/li[4]/input[4]').click()
+            self.driver.find_element_by_xpath('//*[@id="login-submit"]').click()
             time.sleep(2)
 
             # 进入打卡界面
@@ -61,7 +61,7 @@ class Login:
             mylog.info_log('{}已打卡'.format(name))
         except:
             # 写入错误日志
-            mylog.info_err('{}打开失败'.format(name))
+            mylog.info_err('{}打卡失败'.format(name))
 
             # 失败则发送邮箱
             self.mail_server.sendmail(email)
